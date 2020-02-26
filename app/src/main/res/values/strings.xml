@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Flaubook</string>
+    <string name="notification_channel_name">Comandi riproduzione</string>
+    <string name="notification_channel_description">test channel desc</string>
+    <string name="pause">Pausa</string>
+    <string name="play">Riproduci</string>
+    <string name="theme_pref_key">theme_pref</string>
+    <string name="delete_book_option">Elimina libro</string>
+    <string name="mark_finished_option">Segna come finito</string>
+    <string name="reset_book_option">Segna come non letto</string>
+    <string name="options">Opzioni</string>
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    <string name="confirm_delete">Vuoi rimuovere %1$s ?</string>
+    <string name="ok">OK</string>
+    <string name="zip_load_error">Impossibile importare il file selezionato</string>
+    <string name="error">Errore</string>
+    <string name="by">Di %1$s</string>
+    <string name="read_by">Letto da %1$s</string>
+    <string name="finished">FINITO</string>
+    <string name="add_book_to_start">Aggiungi un libro per iniziare</string>
+    <string name="remaining_time">%1$s rimanenti</string>
+    <string name="chapters">Capitoli</string>
+    <string name="replay_10">Riavvolgi 10 secondi</string>
+    <string name="replay_30">Riavvolgi 30 secondi</string>
+    <string name="forward_10">Avanza 10 secondi</string>
+    <string name="forward_30">Avanza 30 secondi</string>
+    <string name="unknown_remaining">Tempo rimanente sconosciuto</string>
+</resources>

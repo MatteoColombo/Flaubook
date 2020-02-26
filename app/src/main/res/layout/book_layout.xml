@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/book_cover"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="Book cover image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_cover" />
+
+    <TextView
+        android:id="@+id/book_current_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Ancora posta via Gufo"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_cover"
+        tools:text="Ancora posta via Gufo" />
+
+    <SeekBar
+        android:id="@+id/book_seek_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:progress="65"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_current_chapter" />
+
+    <TextView
+        android:id="@+id/book_remaining_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="45m 16s rimanenti"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_seek_bar"
+        tools:text="45m 16s rimanenti" />
+
+    <Button
+        android:id="@+id/book_play_pause"
+        style="@style/BookPlayerButton.Big"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/ic_play_circle_filled_black_78dp"
+        app:layout_constraintBottom_toTopOf="@id/book_show_chapters"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_remaining_time"
+        app:layout_constraintVertical_bias="0.513" />
+
+    <Button
+        android:id="@+id/book_sf_30"
+        style="@style/BookPlayerButton.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:icon="@drawable/ic_forward_30_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/book_show_chapters"
+        app:layout_constraintStart_toEndOf="@+id/book_play_pause"
+        app:layout_constraintTop_toBottomOf="@+id/book_remaining_time" />
+
+    <Button
+        android:id="@+id/book_sb_30"
+        style="@style/BookPlayerButton.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:icon="@drawable/ic_replay_30_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/book_show_chapters"
+        app:layout_constraintEnd_toStartOf="@+id/book_play_pause"
+        app:layout_constraintTop_toBottomOf="@+id/book_remaining_time" />
+
+    <Button
+        android:id="@+id/book_skip_next"
+        style="@style/BookPlayerButton.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:icon="@drawable/ic_skip_next_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/book_show_chapters"
+        app:layout_constraintStart_toEndOf="@+id/book_sf_30"
+        app:layout_constraintTop_toBottomOf="@+id/book_remaining_time" />
+
+    <Button
+        android:id="@+id/book_skip_prev"
+        style="@style/BookPlayerButton.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:icon="@drawable/ic_skip_previous_black_48dp"
+        app:layout_constraintBottom_toTopOf="@id/book_show_chapters"
+        app:layout_constraintEnd_toStartOf="@+id/book_sb_30"
+        app:layout_constraintTop_toBottomOf="@+id/book_remaining_time" />
+
+    <Button
+        android:id="@+id/book_show_chapters"
+        style="@style/MatOutButtonWithIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/chapters"
+        app:icon="@drawable/ic_format_list_bulleted_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

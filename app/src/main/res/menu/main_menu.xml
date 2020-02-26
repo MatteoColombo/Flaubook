@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="it.speedcubing.flaubook.MainActivity" >
+    <item
+        android:id="@+id/main_app_bar_theme"
+        android:icon="@drawable/ic_brightness_4_black_24dp"
+        android:orderInCategory="101"
+        android:title="Cambia tema"
+        app:iconTint="?android:textColorPrimary"
+        app:showAsAction="always" />
+</menu>
