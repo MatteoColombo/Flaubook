@@ -75,21 +75,41 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
                 ConnectionAction.PLAY_PAUSE -> {
                     when (playState.value!!.state) {
                         PlaybackStateCompat.STATE_PLAYING -> tpc.pause()
-                        PlaybackStateCompat.STATE_PAUSED, PlaybackState.STATE_NONE -> handlePlay(bundle)
+                        PlaybackStateCompat.STATE_PAUSED, PlaybackState.STATE_NONE -> handlePlay(
+                            bundle
+                        )
                         else -> false
                     }
                 }
-                ConnectionAction.PLAY -> handlePlay(bundle)
-                ConnectionAction.PAUSE -> tpc.pause()
-                ConnectionAction.SKIP_NEXT -> tpc.skipToNext()
-                ConnectionAction.SKIP_PREV -> tpc.skipToPrevious()
-                ConnectionAction.MOVE_FW -> tpc.sendCustomAction(FORWARD_30_VAL, null)
-                ConnectionAction.MOVE_BW -> tpc.sendCustomAction(REPLAY_30_VAL, null)
                 ConnectionAction.PLAY_BOOK, ConnectionAction.PLAY_CHAPTER -> tpc.playFromMediaId(
                     id,
                     bundle
                 )
-                ConnectionAction.SEEK_TO -> tpc.seekTo(extra.toLong())
+                ConnectionAction.PLAY -> handlePlay(bundle)
+                else -> {
+                    when (playState.value!!.state) {
+                        PlaybackState.STATE_PAUSED, PlaybackState.STATE_PLAYING -> {
+                            when (action) {
+                                ConnectionAction.PAUSE -> tpc.pause()
+                                ConnectionAction.SKIP_NEXT -> tpc.skipToNext()
+                                ConnectionAction.SKIP_PREV -> tpc.skipToPrevious()
+                                ConnectionAction.MOVE_FW -> tpc.sendCustomAction(
+                                    FORWARD_30_VAL,
+                                    null
+                                )
+                                ConnectionAction.MOVE_BW -> tpc.sendCustomAction(
+                                    REPLAY_30_VAL,
+                                    null
+                                )
+                                ConnectionAction.SEEK_TO -> tpc.seekTo(extra.toLong())
+                                else -> false
+                            }
+                        }
+                        else -> false
+                    }
+                }
+
+
             }
         } else {
             false
