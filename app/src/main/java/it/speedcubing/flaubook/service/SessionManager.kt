@@ -35,7 +35,7 @@ class SessionManager(private val session: MediaSessionCompat) {
 
     private fun generateActions(state: Int) {
         var action: Long =
-            PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
+            PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or PlaybackStateCompat.ACTION_STOP
         when (state) {
             PlaybackStateCompat.STATE_PLAYING -> action =
                 action or PlaybackStateCompat.ACTION_PAUSE
@@ -57,7 +57,8 @@ class SessionManager(private val session: MediaSessionCompat) {
                     }
                     else -> action = action or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                 }
-                action = action or PlaybackStateCompat.ACTION_FAST_FORWARD or PlaybackStateCompat.ACTION_REWIND
+                action =
+                    action or PlaybackStateCompat.ACTION_FAST_FORWARD or PlaybackStateCompat.ACTION_REWIND
                 pbsBuilder.addCustomAction(ACTION_FW_10)
                 pbsBuilder.addCustomAction(ACTION_BW_10)
                 pbsBuilder.addCustomAction(ACTION_FW_30)

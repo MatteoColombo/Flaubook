@@ -22,7 +22,10 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
     private var state: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
     val meta = MutableLiveData<NowPlayingMetadata>()
     val position = MutableLiveData<Long>().apply { postValue(0L) }
-    val playPauseRes = MutableLiveData<Int>().apply { postValue(R.mipmap.ic_launcher) }
+    val playPauseRes =
+        MutableLiveData<Int>().apply { postValue(R.drawable.ic_pause_circle_filled_black_78dp) }
+    val playPauseResMini =
+        MutableLiveData<Int>().apply { postValue(R.drawable.ic_pause_black_48dp) }
     private var updatePosition = true
     private val handler = Handler(Looper.getMainLooper())
 
@@ -89,6 +92,12 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
             when (playbackState.isPlaying) {
                 true -> R.drawable.ic_pause_circle_filled_black_78dp
                 else -> R.drawable.ic_play_circle_filled_black_78dp
+            }
+        )
+        playPauseResMini.postValue(
+            when (playbackState.isPlaying) {
+                true -> R.drawable.ic_pause_black_48dp
+                else -> R.drawable.ic_play_arrow_black_48dp
             }
         )
     }

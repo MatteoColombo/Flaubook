@@ -37,6 +37,8 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
         if (player.isPlaying)
             focusManager.abandonFocus()
         player.release()
+        sessionManager.updateMeta(null)
+        sessionManager.updateState(PlaybackStateCompat.STATE_NONE)
     }
 
     fun move(delta: Int) {

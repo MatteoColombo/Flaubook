@@ -9,15 +9,19 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.speedcubing.flaubook.filetools.ImportManager
 import it.speedcubing.flaubook.fragment.BookFragment
 import it.speedcubing.flaubook.fragment.BookList
 import it.speedcubing.flaubook.fragment.CLFragment
+import it.speedcubing.flaubook.fragment.TileFragment
 import it.speedcubing.flaubook.tools.ThemeManager
 import it.speedcubing.flaubook.viewmodel.PlayerVM
 import java.util.*
@@ -33,6 +37,9 @@ class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.Sho
     private lateinit var zipImportManager: ImportManager
     private lateinit var playerModel: PlayerVM
     private var fabVisible = true
+    private val playTile = TileFragment()
+    private lateinit var tileFrame: FrameLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,9 @@ class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.Sho
         ).get(PlayerVM::class.java)
 
         setContentView(R.layout.main_layout)
+
+        tileFrame = findViewById(R.id.tile_frame)
+
 
         val currFrag = supportFragmentManager.findFragmentById(R.id.main_frame)
         if (currFrag == null) {
@@ -56,15 +66,40 @@ class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.Sho
         fab.setOnClickListener { zipImportManager.start() }
 
 
+        playerModel.isPlayPause.observe(this, Observer {
+            val currTileFrag = supportFragmentManager.findFragmentById(R.id.tile_frame)
+            when {
+                currTileFrag == null && it -> addTileFrag()
+                currTileFrag != null && !it -> removeTileFrag()
+                else -> false
+            }
+        })
+
         supportFragmentManager.addOnBackStackChangedListener {
             when (supportFragmentManager.findFragmentById(R.id.main_frame)) {
-                is BookList -> fab.show()
-                else -> fab.hide()
+                is BookList -> {
+                    fab.show()
+                    tileFrame.visibility = View.VISIBLE
+
+                }
+                else -> {
+                    fab.hide()
+                    tileFrame.visibility = View.GONE
+                }
             }
             fabVisible = !fabVisible
         }
 
         zipImportManager = ImportManager(this)
+    }
+
+
+    private fun addTileFrag() {
+        supportFragmentManager.beginTransaction().add(R.id.tile_frame, playTile).commit()
+    }
+
+    private fun removeTileFrag() {
+        supportFragmentManager.beginTransaction().remove(playTile).commit()
     }
 
     override fun onRestart() {

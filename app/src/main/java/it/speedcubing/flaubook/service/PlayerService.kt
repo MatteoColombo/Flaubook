@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -85,7 +86,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mediaSession.controller.playbackState != EMPTY_PLAYBACK_STATE) {
+        if (mediaSession.controller.playbackState.state != PlaybackStateCompat.STATE_NONE) {
             player.stop()
         }
         mediaSession.release()
