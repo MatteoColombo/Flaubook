@@ -22,6 +22,7 @@ import it.speedcubing.flaubook.fragment.BookFragment
 import it.speedcubing.flaubook.fragment.BookList
 import it.speedcubing.flaubook.fragment.CLFragment
 import it.speedcubing.flaubook.fragment.TileFragment
+import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.tools.ThemeManager
 import it.speedcubing.flaubook.viewmodel.PlayerVM
 import java.util.*
@@ -30,7 +31,7 @@ private const val TAG = "FLAUBOOK"
 private const val PERMISSION_REQUEST_CODE: Int = 3828
 private const val PICKER_REQUEST_CODE: Int = 3828
 
-class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.ShowChapters {
+class MainActivity : AppCompatActivity(), FragmentClick {
 
 
     private lateinit var fab: FloatingActionButton
@@ -117,10 +118,10 @@ class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.Sho
         playerModel.disconnect()
     }
 
-
+    /*
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             menuInflater.inflate(R.menu.main_menu, menu)
         }
         return true
@@ -139,6 +140,7 @@ class MainActivity : AppCompatActivity(), BookList.BLCallbacks, BookFragment.Sho
         }
         return true
     }
+    */
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

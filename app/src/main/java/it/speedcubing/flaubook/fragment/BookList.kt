@@ -1,6 +1,5 @@
 package it.speedcubing.flaubook.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,16 +13,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.speedcubing.flaubook.R
+import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.adapter.BLAdapter
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.viewmodel.BookLVM
-import java.util.*
 
 class BookList : Fragment() {
 
     private lateinit var list: RecyclerView
     private lateinit var adapter: BLAdapter
-    private var callbacks: BLCallbacks? = null
+    private lateinit var callbacks: FragmentClick
 
     private val blViewModel: BookLVM by lazy {
         ViewModelProvider(this).get(BookLVM::class.java)
@@ -37,6 +36,7 @@ class BookList : Fragment() {
     ): View? {
         val view = layoutInflater.inflate(R.layout.bl_layout, container, false)
         val main_toolbar: Toolbar = view.findViewById(R.id.main_toolbar)
+        callbacks = (activity as FragmentClick)
         (activity as AppCompatActivity).setSupportActionBar(main_toolbar)
 
         list = view.findViewById(R.id.bl_recycler)
@@ -51,15 +51,6 @@ class BookList : Fragment() {
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callbacks = context as BLCallbacks
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        callbacks = null
-    }
 
     private fun updateUI(books: List<Book>) {
         adapter = BLAdapter(books) { book: Book, long: Boolean ->
@@ -78,9 +69,6 @@ class BookList : Fragment() {
         }
     }
 
-    interface BLCallbacks {
-        fun bookSelected(id: UUID)
-    }
 
     private fun createOptionDialog(book: Book) {
         MaterialAlertDialogBuilder(this.activity).apply {

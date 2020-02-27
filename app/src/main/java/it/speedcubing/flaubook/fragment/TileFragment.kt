@@ -14,8 +14,10 @@ import com.google.android.material.button.MaterialButton
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.connection.ConnectionAction
+import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.tools.timeToString
 import it.speedcubing.flaubook.viewmodel.BookVM
+import java.util.*
 
 class TileFragment : Fragment() {
 
@@ -28,7 +30,7 @@ class TileFragment : Fragment() {
     private lateinit var title: TextView
     private lateinit var remaining: TextView
     private var duration = 0
-
+    private lateinit var callback: FragmentClick
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +42,8 @@ class TileFragment : Fragment() {
                 ViewModelProvider(this, Injector.provideBookModel(this)).get(BookVM::class.java)
         }
         super.onCreateView(inflater, container, savedInstanceState)
+        callback = activity as FragmentClick
+
         val view = inflater.inflate(R.layout.main_play_tile, container, false)
 
         image = view.findViewById(R.id.tile_picture)
@@ -50,7 +54,7 @@ class TileFragment : Fragment() {
         book = view.findViewById(R.id.tile_book)
         title = view.findViewById(R.id.tile_title)
         remaining = view.findViewById(R.id.tile_remaining)
-        bookVM.meta.observe(this, Observer { updateStatus(it) })
+        bookVM.meta.observe(this, Observer { updateStatus(it, view) })
         bookVM.playPauseResMini.observe(this, Observer { playPause.setIconResource(it) })
         bookVM.position.observe(this, Observer {
             remaining.text = getString(
@@ -62,10 +66,13 @@ class TileFragment : Fragment() {
         return view
     }
 
-    fun updateStatus(meta: BookVM.NowPlayingMetadata) {
+    fun updateStatus(meta: BookVM.NowPlayingMetadata, view: View) {
+        view.setOnClickListener { callback.bookSelected(UUID.fromString(meta.id)) }
         duration = meta.duration ?: 0
         book.text = meta.book
         title.text = meta.title
         image.setImageBitmap(meta.image)
     }
+
+
 }

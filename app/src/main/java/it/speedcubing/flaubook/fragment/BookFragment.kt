@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
+import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.connection.ConnectionAction
 import it.speedcubing.flaubook.tools.timeToString
 import it.speedcubing.flaubook.viewmodel.BookVM
@@ -120,7 +121,7 @@ class BookFragment : Fragment() {
         nextChapter.isEnabled = !meta.isLast
 
         chaptersList.setOnClickListener {
-            (activity as ShowChapters).showChapters(meta.id, ((meta.chapter) ?: 1) - 1)
+            (activity as FragmentClick).showChapters(meta.id, ((meta.chapter) ?: 1) - 1)
         }
         chaptersList.isEnabled = true
     }
@@ -144,9 +145,7 @@ class BookFragment : Fragment() {
         }
     }
 
-    interface ShowChapters {
-        fun showChapters(id: String, position: Int)
-    }
+
 
 }
 
