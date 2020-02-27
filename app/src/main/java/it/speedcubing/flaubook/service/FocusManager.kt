@@ -13,10 +13,7 @@ class FocusManager(context: Context, player: FlaubookPlayer) {
     private var hasFocus = false
     private lateinit var currentRequest: AudioFocusRequest
     private val callback = player as FocusCallback
-
-
-    val focus: Boolean get() = synchronized(focusLock) { hasFocus }
-
+    
     fun requestFocusAndPlay(): Boolean {
         synchronized(focusLock) {
             if (hasFocus) {
@@ -68,9 +65,10 @@ class FocusManager(context: Context, player: FlaubookPlayer) {
                     }
                 }
                 AudioManager.AUDIOFOCUS_LOSS -> synchronized(focusLock) {
-                    callback.focusPause()
+                    am.abandonAudioFocusRequest(currentRequest)
                     playOnGain = false
                     hasFocus = false
+                    callback.focusPause()
                 }
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                     callback.focusPause()

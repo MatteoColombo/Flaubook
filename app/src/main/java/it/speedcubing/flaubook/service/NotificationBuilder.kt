@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
 import it.speedcubing.flaubook.R
@@ -84,8 +85,10 @@ class NotificationBuilder(private val context: Context) {
             .setContentText(meta.title)
             .setLargeIcon(meta.description.iconBitmap)
             .setOnlyAlertOnce(true)
+            .setAutoCancel(false)
             .setDeleteIntent(stopPendingIntent)
             .setSmallIcon(R.drawable.notification_icon)
+            .setColor(ContextCompat.getColor(context,android.R.color.white))
             .setStyle(style)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()

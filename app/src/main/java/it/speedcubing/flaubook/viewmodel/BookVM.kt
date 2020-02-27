@@ -78,6 +78,7 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
         if (mediaMetadata.duration != 0L) {
             val nowPlayingMetadata = NowPlayingMetadata(
                 mediaMetadata.id,
+                mediaMetadata.album,
                 mediaMetadata.description.iconBitmap,
                 mediaMetadata.title,
                 mediaMetadata.duration.toInt(),
@@ -105,6 +106,7 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
 
     data class NowPlayingMetadata(
         val id: String,
+        val book: String?,
         val image: Bitmap?,
         val title: String?,
         val duration: Int?,

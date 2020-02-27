@@ -24,6 +24,7 @@ class TileFragment : Fragment() {
     private lateinit var image: ImageView
     private lateinit var playPause: MaterialButton
     private lateinit var rollBack: Button
+    private lateinit var book: TextView
     private lateinit var title: TextView
     private lateinit var remaining: TextView
     private var duration = 0
@@ -46,6 +47,7 @@ class TileFragment : Fragment() {
         playPause.setOnClickListener { bookVM.sendAction(ConnectionAction.PLAY_PAUSE) }
         rollBack = view.findViewById(R.id.tile_roll_back)
         rollBack.setOnClickListener { bookVM.sendAction(ConnectionAction.MOVE_BW) }
+        book = view.findViewById(R.id.tile_book)
         title = view.findViewById(R.id.tile_title)
         remaining = view.findViewById(R.id.tile_remaining)
         bookVM.meta.observe(this, Observer { updateStatus(it) })
@@ -62,6 +64,7 @@ class TileFragment : Fragment() {
 
     fun updateStatus(meta: BookVM.NowPlayingMetadata) {
         duration = meta.duration ?: 0
+        book.text = meta.book
         title.text = meta.title
         image.setImageBitmap(meta.image)
     }
