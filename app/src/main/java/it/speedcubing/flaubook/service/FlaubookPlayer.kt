@@ -99,7 +99,7 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
                     repo.moveToNextChapter(chapter)
                     currentChapter += 1
                     preparePlayer(this.chapters[currentChapter].file, 0)
-                    updateMetaAndPlay()
+                    focusManager.requestFocusAndPlay()
                 }
 
             }
