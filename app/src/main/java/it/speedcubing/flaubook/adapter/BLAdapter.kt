@@ -15,7 +15,7 @@ import it.speedcubing.flaubook.tools.timeToString
 
 class BLAdapter(
     private val books: List<Book>,
-    private val playing: Int = 0,
+    private val playing: Int = -1,
     private val clickListener: ((Book, Boolean) -> Unit)? = null
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

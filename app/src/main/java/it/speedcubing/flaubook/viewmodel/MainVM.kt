@@ -14,6 +14,7 @@ import it.speedcubing.flaubook.connection.ConnectionAction
 import it.speedcubing.flaubook.connection.EMPTY_PLAYBACK_STATE
 import it.speedcubing.flaubook.connection.NOTHING_PLAYING
 import it.speedcubing.flaubook.connection.PlayerConnectionManager
+import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.service.*
 
@@ -21,6 +22,9 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
     private val bookRepository = BookRepository.get()
     val bookListLD = bookRepository.getBooks()
 
+    fun deleteBook(book: Book) = bookRepository.deleteBook(book)
+    fun resetBook(book: Book) = bookRepository.resetBook(book)
+    fun finishBook(book: Book) = bookRepository.markBookAsFinished(book)
 
     private var isConnected = false
     private var state: PlaybackStateCompat = EMPTY_PLAYBACK_STATE

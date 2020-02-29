@@ -24,6 +24,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.speedcubing.flaubook.adapter.BLAdapter
 import it.speedcubing.flaubook.connection.ConnectionAction
@@ -172,8 +173,7 @@ class MainActivity : AppCompatActivity() {
                 val fragment: BottomSheetDialogFragment = BookFragment()
                 fragment.show(supportFragmentManager, fragment.tag)
             }
-            true -> {
-            }
+            true -> createOptionDialog(book)
         }
 
     }
@@ -206,6 +206,37 @@ class MainActivity : AppCompatActivity() {
             }
             return false
         }
+
+    }
+
+    private fun createOptionDialog(book: Book) {
+        MaterialAlertDialogBuilder(this).apply {
+            setTitle(getString(R.string.options))
+            setItems(
+                arrayOf(
+                    getString(R.string.delete_book_option),
+                    getString(R.string.mark_finished_option),
+                    getString(
+                        R.string.reset_book_option
+                    )
+                )
+            ) { _, which ->
+                when (which) {
+                    0 -> showDeleteConfirmDialog(book)
+                    1 -> mainVM.finishBook(book)
+                    2 -> mainVM.resetBook(book)
+                }
+            }
+        }.create().show()
+    }
+
+    private fun showDeleteConfirmDialog(book: Book) {
+        MaterialAlertDialogBuilder(this).apply {
+            setTitle("Elimina")
+            setMessage(getString(R.string.confirm_delete, book.title))
+            setPositiveButton(getString(R.string.yes)) { _, _ -> mainVM.deleteBook(book) }
+            setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+        }.create().show()
 
     }
 
