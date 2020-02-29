@@ -14,21 +14,51 @@ import it.speedcubing.flaubook.connection.ConnectionAction
 import it.speedcubing.flaubook.connection.EMPTY_PLAYBACK_STATE
 import it.speedcubing.flaubook.connection.NOTHING_PLAYING
 import it.speedcubing.flaubook.connection.PlayerConnectionManager
+import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.service.*
 
-class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
+class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
+    private val bookRepository = BookRepository.get()
+    val bookListLD = bookRepository.getBooks()
 
 
+    private var isConnected = false
     private var state: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
+    private var updatePosition = true
+    private val handler = Handler(Looper.getMainLooper())
+
+
+    val isPlayPause = MutableLiveData<Boolean>().apply { postValue(false) }
     val meta = MutableLiveData<NowPlayingMetadata>()
     val position = MutableLiveData<Long>().apply { postValue(0L) }
     val playPauseRes =
         MutableLiveData<Int>().apply { postValue(R.drawable.ic_pause_circle_filled_black_78dp) }
     val playPauseResMini =
-        MutableLiveData<Int>().apply { postValue(R.drawable.ic_pause_black_48dp) }
-    private var updatePosition = true
-    private val handler = Handler(Looper.getMainLooper())
+        MutableLiveData<Int>().apply { postValue(R.drawable.notification_pause) }
 
+    private val connectionObserver = Observer<Boolean> { isConnected = it }
+
+
+    fun connect() {
+        connection.connect()
+        connection.isConnected.observeForever(connectionObserver)
+        connection.nowPlaying.observeForever(mmObserver)
+        connection.playState.observeForever(pbsObserver)
+        updatePosition = true
+        checkPlaybackPosition()
+    }
+
+    fun disconnect() {
+        connection.isConnected.removeObserver(connectionObserver)
+        connection.playState.removeObserver(pbsObserver)
+        connection.nowPlaying.removeObserver(mmObserver)
+        connection.disconnect()
+        updatePosition = false
+    }
+
+    fun playSomething(id: String, chapter: Int = -1) {
+        connection.sendCommand(ConnectionAction.PLAY_BOOK, id, chapter)
+    }
 
     fun sendAction(action: ConnectionAction) {
         connection.sendCommand(action)
@@ -42,16 +72,16 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
         state = it ?: EMPTY_PLAYBACK_STATE
         val metadata = connection.nowPlaying.value ?: NOTHING_PLAYING
         updateState(state, metadata)
+        isPlayPause.postValue(
+            when (state.state) {
+                PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.STATE_PAUSED -> true
+                else -> false
+            }
+        )
     }
 
     private val mmObserver = Observer<MediaMetadataCompat> {
         updateState(state, it)
-    }
-
-    private val musicServiceConnection = connection.also {
-        it.playState.observeForever(pbsObserver)
-        it.nowPlaying.observeForever(mmObserver)
-        checkPlaybackPosition()
     }
 
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
@@ -61,14 +91,6 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
         if (updatePosition)
             checkPlaybackPosition()
     }, 1000)
-
-
-    override fun onCleared() {
-        super.onCleared()
-        musicServiceConnection.playState.removeObserver(pbsObserver)
-        musicServiceConnection.nowPlaying.removeObserver(mmObserver)
-        updatePosition = false
-    }
 
 
     private fun updateState(
@@ -97,8 +119,8 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
         )
         playPauseResMini.postValue(
             when (playbackState.isPlaying) {
-                true -> R.drawable.ic_pause_black_48dp
-                else -> R.drawable.ic_play_arrow_black_48dp
+                true -> R.drawable.notification_pause
+                else -> R.drawable.notification_play
             }
         )
     }
@@ -122,7 +144,9 @@ class BookVM(private val connection: PlayerConnectionManager) : ViewModel() {
 
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return BookVM(mediaServiceConnection) as T
+            return MainVM(mediaServiceConnection) as T
         }
     }
+
+
 }

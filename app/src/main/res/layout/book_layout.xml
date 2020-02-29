@@ -2,31 +2,46 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/book_book_title"
+        android:gravity="center"
+        android:fontFamily="@font/pacifico"
+        android:textSize="16sp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/book_cover"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/book_cover"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
+        app:layout_constraintBottom_toTopOf="@+id/book_current_chapter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/book_current_chapter"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="18sp"
         android:ellipsize="end"
+        android:gravity="center"
         android:maxLines="1"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/book_play_pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/book_cover"
         tools:text="Ancora posta via Gufo" />
 
     <SeekBar
@@ -35,16 +50,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="40dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
+        android:layout_marginBottom="32dp"
+        android:paddingStart="8dip"
+        android:paddingEnd="8dip"
         android:progress="65"
         app:layout_constraintBottom_toTopOf="@+id/book_show_chapters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/book_duration"
+        android:id="@+id/book_remaining_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/book_seek_bar"
@@ -64,11 +79,11 @@
         style="@style/BookPlayerButton.Big"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         app:icon="@drawable/ic_play_circle_filled_black_78dp"
         app:layout_constraintBottom_toTopOf="@+id/book_seek_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/book_current_chapter" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/book_sf_30"
@@ -119,7 +134,7 @@
         style="@style/MatOutButtonWithIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/chapters"
         app:icon="@drawable/ic_format_list_bulleted_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -13,11 +13,16 @@ import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.tools.timeToString
 
-class BLAdapter(private val books: List<Book>, private val clickListener: (Book, Boolean) -> Unit) :
+class BLAdapter(
+    private val books: List<Book>,
+    private val playing: Int = 0,
+    private val clickListener: ((Book, Boolean) -> Unit)? = null
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         if (books.isEmpty()) return -1
+        if (position == playing) return 2
         return when (books[position].listened) {
             0 -> 0
             else -> 1
@@ -28,7 +33,7 @@ class BLAdapter(private val books: List<Book>, private val clickListener: (Book,
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             0 -> BLViewHolder(inflater.inflate(R.layout.bl_item_no_progress, parent, false))
-            1 -> BLProgressViewHolder(inflater.inflate(R.layout.bl_item_layout, parent, false))
+            1,2 -> BLProgressViewHolder(inflater.inflate(R.layout.bl_item_layout, parent, false))
             else -> BLEmptyViewHolder(inflater.inflate(R.layout.bl_empty, parent, false))
         }
     }
@@ -38,7 +43,7 @@ class BLAdapter(private val books: List<Book>, private val clickListener: (Book,
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (books.isNotEmpty()) {
-            (holder as BLViewHolder).bind(books[position], clickListener)
+            (holder as BLViewHolder).bind(books[position], clickListener!!)
         }
     }
 

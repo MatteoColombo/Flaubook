@@ -4,8 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import it.speedcubing.flaubook.connection.PlayerConnectionManager
 import it.speedcubing.flaubook.service.PlayerService
-import it.speedcubing.flaubook.viewmodel.BookVM
-import it.speedcubing.flaubook.viewmodel.PlayerVM
+import it.speedcubing.flaubook.viewmodel.MainVM
 
 object Injector {
 
@@ -16,14 +15,9 @@ object Injector {
         )
     }
 
-    fun providePlayerModel(context: Context): PlayerVM.Factory {
+    fun provideMainViewModel(context: Context): MainVM.Factory {
         val connection = providePlayerConnection(context.applicationContext)
-        return PlayerVM.Factory(connection)
-    }
-
-    fun provideBookModel(context: Context): BookVM.Factory{
-        val connection = providePlayerConnection(context.applicationContext)
-        return BookVM.Factory(connection)
+        return MainVM.Factory(connection)
     }
 
 }

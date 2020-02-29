@@ -13,13 +13,13 @@ import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.adapter.CLAdapter
 import it.speedcubing.flaubook.viewmodel.ChapterLVM
-import it.speedcubing.flaubook.viewmodel.PlayerVM
+import it.speedcubing.flaubook.viewmodel.MainVM
 import java.util.*
 
 class CLFragment : Fragment() {
 
     private lateinit var clVM: ChapterLVM
-    private lateinit var playerVM: PlayerVM
+    private lateinit var playerVM: MainVM
     private lateinit var chapterList: RecyclerView
     private var currentChapter = 0
 
@@ -35,7 +35,7 @@ class CLFragment : Fragment() {
             clVM = ViewModelProvider(this).get(ChapterLVM::class.java)
             clVM.bookID.postValue(bookId)
             playerVM =
-                ViewModelProvider(this, Injector.providePlayerModel(this)).get(PlayerVM::class.java)
+                ViewModelProvider(this, Injector.provideMainViewModel(this)).get(MainVM::class.java)
         }
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.cl_layout, container, false)

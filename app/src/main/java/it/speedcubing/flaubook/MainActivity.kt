@@ -5,101 +5,105 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.FrameLayout
+import android.util.Log
+import android.view.*
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GestureDetectorCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import it.speedcubing.flaubook.adapter.BLAdapter
+import it.speedcubing.flaubook.connection.ConnectionAction
+import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.filetools.ImportManager
 import it.speedcubing.flaubook.fragment.BookFragment
-import it.speedcubing.flaubook.fragment.BookList
-import it.speedcubing.flaubook.fragment.CLFragment
-import it.speedcubing.flaubook.fragment.TileFragment
-import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.tools.ThemeManager
-import it.speedcubing.flaubook.viewmodel.PlayerVM
-import java.util.*
+import it.speedcubing.flaubook.viewmodel.MainVM
+import kotlin.math.absoluteValue
 
-private const val TAG = "FLAUBOOK"
 private const val PERMISSION_REQUEST_CODE: Int = 3828
 private const val PICKER_REQUEST_CODE: Int = 3828
 
-class MainActivity : AppCompatActivity(), FragmentClick {
+class MainActivity : AppCompatActivity() {
 
-
+    private lateinit var toolbar: Toolbar
     private lateinit var fab: FloatingActionButton
     private lateinit var zipImportManager: ImportManager
-    private lateinit var playerModel: PlayerVM
-    private var fabVisible = true
-    private val playTile = TileFragment()
-    private lateinit var tileFrame: FrameLayout
+    private lateinit var mainVM: MainVM
+    private lateinit var bookList: RecyclerView
+    private lateinit var bottomBar: BottomAppBar
+    private lateinit var bottomPlayPause: MaterialButton
+    private lateinit var bottomProgress: ProgressBar
+    private lateinit var mDetectorCompat: GestureDetectorCompat
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        playerModel = ViewModelProvider(
-            this,
-            Injector.providePlayerModel(this)
-        ).get(PlayerVM::class.java)
+        /* Get view model */
+        mainVM =
+            ViewModelProvider(this, Injector.provideMainViewModel(this)).get(MainVM::class.java)
 
+        /* Set content and appbar */
         setContentView(R.layout.main_layout)
+        toolbar = findViewById(R.id.main_toolbar)
+        setSupportActionBar(toolbar)
 
-        tileFrame = findViewById(R.id.tile_frame)
 
-
-        val currFrag = supportFragmentManager.findFragmentById(R.id.main_frame)
-        if (currFrag == null) {
-            val fragment = BookList()
-            supportFragmentManager.beginTransaction()
-                .add(R.id.main_frame, fragment)
-                .commit()
-        }
-
+        /* Init FAB and ZIP importer */
         fab = findViewById(R.id.main_fab)
         fab.setOnClickListener { zipImportManager.start() }
+        zipImportManager = ImportManager(this)
 
-
-        playerModel.isPlayPause.observe(this, Observer {
-            val currTileFrag = supportFragmentManager.findFragmentById(R.id.tile_frame)
-            when {
-                currTileFrag == null && it -> addTileFrag()
-                currTileFrag != null && !it -> removeTileFrag()
-            }
+        /* Init booklist */
+        bookList = findViewById(R.id.main_book_list)
+        bookList.layoutManager = LinearLayoutManager(this)
+        bookList.adapter = BLAdapter(emptyList())
+        mainVM.bookListLD.observe(this, Observer {
+            bookList.adapter =
+                BLAdapter(it) { book: Book, b: Boolean -> bookListItemClick(book, b) }
         })
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            when (supportFragmentManager.findFragmentById(R.id.main_frame)) {
-                is BookList -> {
-                    fab.show()
-                    tileFrame.visibility = View.VISIBLE
-
-                }
-                else -> {
-                    fab.hide()
-                    tileFrame.visibility = View.GONE
-                }
+        /* Init bottom bar */
+        bottomBar = findViewById(R.id.bottom_appbar)
+        mainVM.isPlayPause.observe(this, Observer {
+            when (it) {
+                true -> bottomBar.visibility = View.VISIBLE
+                else -> bottomBar.visibility = View.GONE
             }
-            fabVisible = !fabVisible
+        })
+        bottomBar.setOnClickListener {
+            val fragment: BottomSheetDialogFragment = BookFragment()
+            fragment.show(supportFragmentManager, fragment.tag)
+        }
+        mDetectorCompat = GestureDetectorCompat(this, SwipeDetector())
+        bottomBar.setOnTouchListener { _, event ->
+            mDetectorCompat.onTouchEvent(event)
         }
 
-        zipImportManager = ImportManager(this)
-    }
-
-
-    private fun addTileFrag() {
-        supportFragmentManager.beginTransaction().add(R.id.tile_frame, playTile).commit()
-    }
-
-    private fun removeTileFrag() {
-        supportFragmentManager.beginTransaction().remove(playTile).commit()
+        /* Register to meta and state */
+        bottomPlayPause = findViewById(R.id.bottom_play_pause)
+        bottomPlayPause.setOnClickListener { mainVM.sendAction(ConnectionAction.PLAY_PAUSE) }
+        bottomProgress = findViewById(R.id.bottom_progress)
+        mainVM.meta.observe(this, Observer { updateUI(it) })
+        mainVM.playPauseResMini.observe(this, Observer { bottomPlayPause.setIconResource(it) })
+        mainVM.position.observe(this, Observer {
+            val intPos = it.toInt()
+            bottomProgress.progress = intPos
+        })
     }
 
     override fun onRestart() {
@@ -109,20 +113,18 @@ class MainActivity : AppCompatActivity(), FragmentClick {
 
     override fun onStart() {
         super.onStart()
-        playerModel.connect()
+        mainVM.connect()
     }
 
     override fun onStop() {
         super.onStop()
-        playerModel.disconnect()
+        mainVM.disconnect()
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            menuInflater.inflate(R.menu.main_menu, menu)
-        }
+        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
@@ -163,29 +165,52 @@ class MainActivity : AppCompatActivity(), FragmentClick {
     }
 
 
-    override fun bookSelected(id: UUID) {
-        playerModel.playSomething(id.toString())
-        val fragment = BookFragment()
-        supportFragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .replace(R.id.main_frame, fragment)
-            .addToBackStack(null).commit()
-
-
-    }
-
-    override fun showChapters(id: String, position: Int) {
-        val bundle = Bundle()
-        bundle.putSerializable("book_id", UUID.fromString(id))
-        bundle.putInt("chapter_num", position)
-        val fragment = CLFragment()
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .replace(R.id.main_frame, fragment)
-            .addToBackStack(null).commit()
+    private fun bookListItemClick(book: Book, isLong: Boolean) {
+        when (isLong) {
+            false -> {
+                mainVM.playSomething(book.id.toString())
+                val fragment: BottomSheetDialogFragment = BookFragment()
+                fragment.show(supportFragmentManager, fragment.tag)
+            }
+            true -> {
+            }
+        }
 
     }
 
+    private fun updateUI(meta: MainVM.NowPlayingMetadata) {
+        updateBottomBar(meta)
+    }
+
+    private fun updateBottomBar(meta: MainVM.NowPlayingMetadata) {
+        findViewById<ImageView>(R.id.bottom_picture).setImageBitmap(meta.image)
+        findViewById<TextView>(R.id.bottom_title).text = "${meta.title} - ${meta.book}"
+        bottomProgress.max = meta.duration ?: 100
+    }
+
+    private inner class SwipeDetector : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onFling(
+            event1: MotionEvent,
+            event2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            val dx = (event2.x - event1.x).absoluteValue
+            val dy = event2.y - event1.y
+            Log.i("SWIPER", "$dx $dy $velocityY")
+            if (dx < TOLERATED_X && velocityY <= MINIMUM_SPEED && dy <= MINIMUM_Y) {
+                val fragment: BottomSheetDialogFragment = BookFragment()
+                fragment.show(supportFragmentManager, fragment.tag)
+                return true
+            }
+            return false
+        }
+
+    }
 
 }
+
+private const val MINIMUM_SPEED = -100
+private const val TOLERATED_X = 200
+private const val MINIMUM_Y = -100

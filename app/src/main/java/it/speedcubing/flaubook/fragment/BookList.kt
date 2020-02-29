@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,9 +33,6 @@ class BookList : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = layoutInflater.inflate(R.layout.bl_layout, container, false)
-        val main_toolbar: Toolbar = view.findViewById(R.id.main_toolbar)
-        callbacks = (activity as FragmentClick)
-        (activity as AppCompatActivity).setSupportActionBar(main_toolbar)
 
         list = view.findViewById(R.id.bl_recycler)
         list.layoutManager = LinearLayoutManager(context)

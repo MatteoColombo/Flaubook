@@ -27,6 +27,6 @@
     <string name="forward_30">Avanza 30 secondi</string>
     <string name="unknown_remaining">Tempo rimanente sconosciuto</string>
     <string name="change_theme">Cambia tema</string>
-    <string name="app_title">FLAUBOOK</string>
+    <string name="app_title">Flaubook</string>
     <string name="zero">0:00</string>
 </resources>

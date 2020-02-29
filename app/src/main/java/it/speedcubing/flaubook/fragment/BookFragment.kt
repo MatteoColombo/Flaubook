@@ -1,39 +1,35 @@
 package it.speedcubing.flaubook.fragment
 
 import android.os.Bundle
-import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
-import androidx.core.view.GestureDetectorCompat
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.connection.ConnectionAction
-import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.tools.timeToStringShort
-import it.speedcubing.flaubook.viewmodel.BookVM
-import kotlin.math.absoluteValue
+import it.speedcubing.flaubook.viewmodel.MainVM
 
-class BookFragment : Fragment() {
 
-    private lateinit var bookModel: BookVM
-    private lateinit var picture: ImageView
+class BookFragment : BottomSheetDialogFragment() {
+
+    private lateinit var mainVM: MainVM
+    private lateinit var image: ImageView
+    private lateinit var chapter: TextView
     private lateinit var seekBar: SeekBar
     private lateinit var progressTime: TextView
-    private lateinit var duration: TextView
-    private lateinit var title: TextView
-    private lateinit var previousChapter: Button
+    private lateinit var remainingTime: TextView
+    private lateinit var playPause: MaterialButton
     private lateinit var nextChapter: Button
-    private lateinit var moveForward: Button
-    private lateinit var moveBack: Button
-    private lateinit var playButton: MaterialButton
-    private lateinit var mDetectorCompat: GestureDetectorCompat
-    private lateinit var chaptersList: Button
+    private lateinit var prevChapter: Button
+    private lateinit var moveFw: Button
+    private lateinit var moveBw: Button
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,58 +39,41 @@ class BookFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
 
         activity?.run {
-            bookModel = ViewModelProvider(
-                this,
-                Injector.provideBookModel(this)
-            ).get(BookVM::class.java)
+            mainVM =
+                ViewModelProvider(this, Injector.provideMainViewModel(this)).get(MainVM::class.java)
         }
         val view = inflater.inflate(R.layout.book_layout, container, false)
-
-        mDetectorCompat = GestureDetectorCompat(this.activity, SwipeDetector())
-        picture = view.findViewById(R.id.book_cover)
-        picture.setOnTouchListener { _, event ->
-            mDetectorCompat.onTouchEvent(event)
-            true
-        }
-
-        playButton = view.findViewById(R.id.book_play_pause)
+        image = view.findViewById(R.id.book_cover)
+        chapter = view.findViewById(R.id.book_current_chapter)
         seekBar = view.findViewById(R.id.book_seek_bar)
         progressTime = view.findViewById(R.id.book_progress_time)
-        progressTime.text = getString(R.string.zero)
-        duration = view.findViewById(R.id.book_duration)
-        duration.text = getString(R.string.zero)
-        title = view.findViewById(R.id.book_current_chapter)
+        remainingTime = view.findViewById(R.id.book_remaining_time)
+        playPause = view.findViewById(R.id.book_play_pause)
         nextChapter = view.findViewById(R.id.book_skip_next)
-        previousChapter = view.findViewById(R.id.book_skip_prev)
-        moveForward = view.findViewById(R.id.book_sf_30)
-        moveBack = view.findViewById(R.id.book_sb_30)
-        chaptersList = view.findViewById(R.id.book_show_chapters)
-        chaptersList.isEnabled = false
+        prevChapter = view.findViewById(R.id.book_skip_prev)
+        moveFw = view.findViewById(R.id.book_sf_30)
+        moveBw = view.findViewById(R.id.book_sb_30)
 
-
-
-        bookModel.position.observe(this, Observer {
-            val position = it.toInt()
-            seekBar.progress = position
-            progressTime.text = timeToStringShort(position)
+        mainVM.meta.observe(this, Observer { updateUI(it) })
+        mainVM.position.observe(this, Observer {
+            val intTime = it.toInt()
+            seekBar.progress = intTime
+            progressTime.text = timeToStringShort(intTime)
+            remainingTime.text = "-${timeToStringShort(seekBar.max - intTime)}"
         })
 
-        bookModel.playPauseRes.observe(this, Observer {
-            playButton.setIconResource(it)
+        mainVM.playPauseRes.observe(this, Observer {
+            playPause.setIconResource(it)
         })
 
-        bookModel.meta.observe(this, Observer { updateUI(it) })
-
-        nextChapter.setOnClickListener { bookModel.sendAction(ConnectionAction.SKIP_NEXT) }
-        previousChapter.setOnClickListener { bookModel.sendAction(ConnectionAction.SKIP_PREV) }
-        moveForward.setOnClickListener { bookModel.sendAction(ConnectionAction.MOVE_FW) }
-        moveBack.setOnClickListener { bookModel.sendAction(ConnectionAction.MOVE_BW) }
-        playButton.setOnClickListener { bookModel.sendAction(ConnectionAction.PLAY_PAUSE) }
+        playPause.setOnClickListener { mainVM.sendAction(ConnectionAction.PLAY_PAUSE) }
+        nextChapter.setOnClickListener { mainVM.sendAction(ConnectionAction.SKIP_NEXT) }
+        prevChapter.setOnClickListener { mainVM.sendAction(ConnectionAction.SKIP_PREV) }
+        moveFw.setOnClickListener { mainVM.sendAction(ConnectionAction.MOVE_FW) }
+        moveBw.setOnClickListener { mainVM.sendAction(ConnectionAction.MOVE_BW) }
         seekBar.setOnSeekBarChangeListener(Seek())
-
         return view
     }
-
 
     private inner class Seek : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -105,52 +84,17 @@ class BookFragment : Fragment() {
 
         override fun onStopTrackingTouch(seekBar: SeekBar?) {
             seekBar?.run {
-                bookModel.seekTo(this.progress)
+                mainVM.seekTo(this.progress)
             }
         }
 
     }
 
-    private fun updateUI(meta: BookVM.NowPlayingMetadata) {
-        seekBar.max = meta.duration ?: 100
-        duration.text = timeToStringShort(meta.duration?:100)
-        if (meta.image != null) {
-            picture.setImageBitmap(meta.image)
-        } else {
-            picture.setImageResource(R.mipmap.ic_launcher)
-        }
-        title.text = meta.title ?: ""
-        previousChapter.isEnabled = !meta.isFirst
+    private fun updateUI(meta: MainVM.NowPlayingMetadata) {
+        chapter.text = meta.title
+        seekBar.max = meta.duration!!.toInt()
+        image.setImageBitmap(meta.image)
         nextChapter.isEnabled = !meta.isLast
-
-        chaptersList.setOnClickListener {
-            (activity as FragmentClick).showChapters(meta.id, ((meta.chapter) ?: 1) - 1)
-        }
-        chaptersList.isEnabled = true
+        prevChapter.isEnabled = !meta.isFirst
     }
-
-
-    private inner class SwipeDetector : GestureDetector.SimpleOnGestureListener() {
-
-        override fun onFling(
-            event1: MotionEvent,
-            event2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            val dx = (event2.x - event1.x).absoluteValue
-            val dy = event2.y - event1.y
-            if (dx < TOLERATED_X && velocityY >= MINIMUM_SPEED && dy > MINIMUM_Y) {
-                activity?.onBackPressed()
-                return true
-            }
-            return false
-        }
-    }
-
-
 }
-
-private const val MINIMUM_SPEED = 100
-private const val TOLERATED_X = 200
-private const val MINIMUM_Y = 250
