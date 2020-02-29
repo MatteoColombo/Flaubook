@@ -3,6 +3,7 @@ package it.speedcubing.flaubook.service
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.session.PlaybackState
+import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import it.speedcubing.flaubook.database.BookRepository
@@ -17,6 +18,7 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
     private var observers = mutableSetOf<PlayerCallback>()
     private val focusManager = FocusManager(context, this)
     private val sessionManager = SessionManager(session)
+    private var progressUpdater: Handler? = null
 
     init {
         player = MediaPlayer()

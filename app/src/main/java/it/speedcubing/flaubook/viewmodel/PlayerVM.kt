@@ -1,6 +1,5 @@
 package it.speedcubing.flaubook.viewmodel
 
-import android.media.session.PlaybackState
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -12,7 +11,7 @@ import it.speedcubing.flaubook.connection.PlayerConnectionManager
 class PlayerVM(private val connection: PlayerConnectionManager) : ViewModel() {
 
     private var isConnected = false
-    val isPlayPause = MutableLiveData<Boolean>().apply { false }
+    val isPlayPause = MutableLiveData<Boolean>().apply { postValue(false) }
     private val connectionObserver = Observer<Boolean> { isConnected = it }
     private val stateObserver = Observer<PlaybackStateCompat> {
         it?.run {

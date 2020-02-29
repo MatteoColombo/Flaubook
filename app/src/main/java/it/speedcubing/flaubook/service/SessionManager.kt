@@ -41,7 +41,6 @@ class SessionManager(private val session: MediaSessionCompat) {
                 action or PlaybackStateCompat.ACTION_PAUSE
             PlaybackStateCompat.STATE_PAUSED -> action =
                 action or PlaybackStateCompat.ACTION_PLAY
-            else -> false
         }
         when (state) {
             PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.STATE_PAUSED -> {
@@ -64,7 +63,6 @@ class SessionManager(private val session: MediaSessionCompat) {
                 pbsBuilder.addCustomAction(ACTION_FW_30)
                 pbsBuilder.addCustomAction(ACTION_BW_30)
             }
-            else -> false
         }
         pbsBuilder.setActions(action)
     }

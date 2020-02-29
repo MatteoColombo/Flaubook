@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
-import it.speedcubing.flaubook.connection.EMPTY_PLAYBACK_STATE
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.database.Chapter
@@ -111,7 +110,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                     val chapterFinished = ch.len == ch.listened
                     val startAt = if (chapterFinished) 0 else ch.listened
                     when {
-                        this == null || this!!.bookId != mediaId -> {
+                        this == null || this.bookId != mediaId -> {
                             player.setBook(cc, book, startAt)
                             currentBook = book
                         }

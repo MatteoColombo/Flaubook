@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/tile_picture"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -20,7 +20,6 @@
 
     <Button
         android:id="@+id/tile_play"
-        style="@style/BookPlayerButton.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -28,30 +27,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/book_play_pause"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:iconTint="@color/colorOnPrimary"
+        style="@style/BookPlayerButton.Small" />
 
     <Button
         android:id="@+id/tile_roll_back"
-        style="@style/BookPlayerButton.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="18dp"
         app:icon="@drawable/ic_replay_30_black_48dp"
+        app:iconTint="@color/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tile_play"
         app:layout_constraintStart_toEndOf="@+id/book_play_pause"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/BookPlayerButton.Small"/>
 
     <TextView
         android:id="@+id/tile_book"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:textColor="@color/colorOnPrimary"
         android:textSize="16dp"
         app:layout_constraintEnd_toStartOf="@+id/tile_roll_back"
         app:layout_constraintHorizontal_bias="0.0"
@@ -64,8 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:textColor="@color/colorOnPrimary"
         android:textSize="14dp"
         app:layout_constraintEnd_toStartOf="@+id/tile_roll_back"
         app:layout_constraintStart_toEndOf="@+id/tile_picture"
@@ -78,8 +78,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:textColor="@color/colorOnPrimary"
         android:textSize="12dp"
         app:layout_constraintEnd_toStartOf="@+id/tile_roll_back"
         app:layout_constraintStart_toEndOf="@+id/tile_picture"

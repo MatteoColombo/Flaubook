@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity(), FragmentClick {
             when {
                 currTileFrag == null && it -> addTileFrag()
                 currTileFrag != null && !it -> removeTileFrag()
-                else -> false
             }
         })
 
@@ -118,7 +117,7 @@ class MainActivity : AppCompatActivity(), FragmentClick {
         playerModel.disconnect()
     }
 
-    /*
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), FragmentClick {
         }
         return true
     }
-    */
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -175,10 +174,10 @@ class MainActivity : AppCompatActivity(), FragmentClick {
 
     }
 
-    override fun showChapters(id: String, current: Int) {
+    override fun showChapters(id: String, position: Int) {
         val bundle = Bundle()
         bundle.putSerializable("book_id", UUID.fromString(id))
-        bundle.putInt("chapter_num", current)
+        bundle.putInt("chapter_num", position)
         val fragment = CLFragment()
         fragment.arguments = bundle
         supportFragmentManager.beginTransaction()

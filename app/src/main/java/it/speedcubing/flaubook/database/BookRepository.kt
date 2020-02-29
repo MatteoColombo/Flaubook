@@ -3,7 +3,10 @@ package it.speedcubing.flaubook.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import it.speedcubing.flaubook.filetools.deleteFile
+import it.speedcubing.flaubook.tools.timeToString
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -11,10 +14,26 @@ private const val DB_NAME = "flaubook-database"
 
 class BookRepository private constructor(context: Context) {
 
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(
+                "ALTER TABLE Book ADD COLUMN strLen TEXT NOT NULL DEFAULT ''"
+            )
+            val cursor = database.query("SELECT * FROM Book")
+            while (cursor.moveToNext()) {
+                val id = cursor.getString(cursor.getColumnIndex("id"))
+                val len = cursor.getInt(cursor.getColumnIndex("len"))
+                val strLen = timeToString(len)
+                database.execSQL("UPDATE Book SET strLen='$strLen' WHERE id='$id'")
+            }
+            cursor.close()
+        }
+    }
+
     private val database: Database = Room.databaseBuilder(
         context.applicationContext, Database::class.java,
         DB_NAME
-    ).build()
+    ).addMigrations(MIGRATION_1_2).build()
 
     private val bookDao = database.bookDao()
     private val executor = Executors.newSingleThreadExecutor()
@@ -55,9 +74,9 @@ class BookRepository private constructor(context: Context) {
     }
 
     fun selectChapter(chapter: Chapter, startTime: Int = 0) = executor.execute {
-        bookDao.selectChapter(chapter.bookId, chapter.chapId )
+        bookDao.selectChapter(chapter.bookId, chapter.chapId)
         bookDao.setChapterProgress(chapter.id, startTime)
-        updateBookTime(chapter.bookId, chapter.chapId , startTime)
+        updateBookTime(chapter.bookId, chapter.chapId, startTime)
     }
 
     fun saveChapterProgress(chapter: Chapter, listened: Int) =
@@ -86,4 +105,5 @@ class BookRepository private constructor(context: Context) {
         fun get(): BookRepository =
             INSTANCE ?: throw IllegalStateException("Repository must be initialized")
     }
+
 }

@@ -1,6 +1,6 @@
 package it.speedcubing.flaubook.interfaces
 
-import java.util.UUID
+import java.util.*
 
 interface FragmentClick {
 

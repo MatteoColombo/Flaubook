@@ -78,7 +78,7 @@ class NotificationBuilder(private val context: Context) {
             .setMediaSession(token)
             .setCancelButtonIntent(stopPendingIntent)
             .setShowCancelButton(true)
-            .setShowActionsInCompactView(1,0)
+            .setShowActionsInCompactView(0,1)
 
         return builder.setContentIntent(controller.sessionActivity)
             .setContentTitle(meta.album)

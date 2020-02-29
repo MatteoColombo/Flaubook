@@ -67,7 +67,7 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
     }
 
 
-    fun sendCommand(action: ConnectionAction, id: String = "", extra: Int = -1) =
+    fun sendCommand(action: ConnectionAction, id: String = "", extra: Int = -1) {
         if (browser.isConnected) {
             val bundle = Bundle()
             bundle.putInt("chapter_id", extra)
@@ -78,7 +78,8 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
                         PlaybackStateCompat.STATE_PAUSED, PlaybackState.STATE_NONE -> handlePlay(
                             bundle
                         )
-                        else -> false
+                        else -> {
+                        }
                     }
                 }
                 ConnectionAction.PLAY_BOOK, ConnectionAction.PLAY_CHAPTER -> tpc.playFromMediaId(
@@ -102,18 +103,17 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
                                     null
                                 )
                                 ConnectionAction.SEEK_TO -> tpc.seekTo(extra.toLong())
-                                else -> false
+                                else -> {
+                                }
                             }
                         }
-                        else -> false
+                        else -> {
+                        }
                     }
                 }
-
-
             }
-        } else {
-            false
         }
+    }
 
 
     private fun handlePlay(bundle: Bundle) {

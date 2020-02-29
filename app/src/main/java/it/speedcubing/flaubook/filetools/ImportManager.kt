@@ -55,7 +55,7 @@ class ImportManager(val context: Context) {
             setContentView(R.layout.import_dialog)
         }
         dialog.show()
-        data?.data?.also { uri ->
+        data.data?.also { uri ->
             Thread(Runnable {
                 var fullPath =
                     FileUtils.getPath(uri, context) ?: FileUtils.getUriFromRemote(context, uri)
@@ -65,7 +65,9 @@ class ImportManager(val context: Context) {
                     try {
                         success = importZip(fullPath, context)
                     } catch (e: Exception) {
-                        Log.e(TAG, e.message)
+                        e.message?.run {
+                            Log.e(TAG, this)
+                        }
                     } finally {
                         dialog.dismiss()
                     }

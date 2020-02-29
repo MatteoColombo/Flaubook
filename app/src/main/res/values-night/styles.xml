@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -52,6 +52,7 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="iconTint">?android:attr/textColorPrimary</item>
         <item name="strokeColor">@color/colorAccent</item>
+        <item name="rippleColor">@color/colorAccent</item>
     </style>
 
 
@@ -63,7 +64,7 @@
         <item name="backgroundTint">@android:color/transparent</item>
         <item name="elevation">0dp</item>
         <item name="iconTint">?android:attr/textColorPrimary</item>
-        <item name="rippleColor">@color/mtrl_btn_text_btn_ripple_color</item>
+        <item name="rippleColor">@android:color/darker_gray</item>
 
     </style>
 

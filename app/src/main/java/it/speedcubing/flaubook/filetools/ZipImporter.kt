@@ -5,6 +5,7 @@ import android.media.MediaMetadataRetriever
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.database.Chapter
+import it.speedcubing.flaubook.tools.timeToString
 import org.json.JSONObject
 import java.io.File
 import java.util.*
@@ -67,6 +68,7 @@ fun importZip(path: String, context: Context): Boolean {
 
     if (wellFormed) {
         chapterFiles.sortBy { it.first }
+        val bookLen = chapterFiles.fold(0) { sum, it -> it.second + sum }
         val book = Book(
             title = bookJSON!!.getString("title"),
             collection = if (bookJSON.has("collection")) bookJSON.getString("collection") else bookJSON.getString(
@@ -78,7 +80,8 @@ fun importZip(path: String, context: Context): Boolean {
             folder = folderPath,
             chapNum = bookJSON.getInt("chaptersNum"),
             picture = "$folderPath/cover.jpg",
-            len = chapterFiles.fold(0) { sum, it -> it.second + sum }
+            len = bookLen,
+            strLen = timeToString(bookLen)
         )
         BookRepository.get().addBook(book)
         val chapters: List<Chapter> = chapterFiles.mapIndexed { index, it ->

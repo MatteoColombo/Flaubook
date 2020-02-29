@@ -17,5 +17,6 @@ data class Book(
     val picture: String,
     val currChap: Int = 0,
     val len: Int = 0,
-    val listened: Int = 0
+    val listened: Int = 0,
+    val strLen:String
 )

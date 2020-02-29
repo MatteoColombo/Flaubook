@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.speedcubing.flaubook.R
-import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.adapter.BLAdapter
 import it.speedcubing.flaubook.database.Book
+import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.viewmodel.BookLVM
 
 class BookList : Fragment() {
@@ -64,7 +64,7 @@ class BookList : Fragment() {
 
     private fun handleListItemClick(book: Book, long: Boolean = false) {
         when (long) {
-            false -> callbacks?.bookSelected(book.id)
+            false -> callbacks.bookSelected(book.id)
             true -> createOptionDialog(book)
         }
     }

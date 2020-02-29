@@ -13,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
-import it.speedcubing.flaubook.interfaces.FragmentClick
 import it.speedcubing.flaubook.connection.ConnectionAction
-import it.speedcubing.flaubook.tools.timeToString
+import it.speedcubing.flaubook.interfaces.FragmentClick
+import it.speedcubing.flaubook.tools.timeToStringShort
 import it.speedcubing.flaubook.viewmodel.BookVM
 import kotlin.math.absoluteValue
 
@@ -24,7 +24,8 @@ class BookFragment : Fragment() {
     private lateinit var bookModel: BookVM
     private lateinit var picture: ImageView
     private lateinit var seekBar: SeekBar
-    private lateinit var remainingtime: TextView
+    private lateinit var progressTime: TextView
+    private lateinit var duration: TextView
     private lateinit var title: TextView
     private lateinit var previousChapter: Button
     private lateinit var nextChapter: Button
@@ -58,8 +59,10 @@ class BookFragment : Fragment() {
 
         playButton = view.findViewById(R.id.book_play_pause)
         seekBar = view.findViewById(R.id.book_seek_bar)
-        remainingtime = view.findViewById(R.id.book_remaining_time)
-        remainingtime.text = getString(R.string.unknown_remaining)
+        progressTime = view.findViewById(R.id.book_progress_time)
+        progressTime.text = getString(R.string.zero)
+        duration = view.findViewById(R.id.book_duration)
+        duration.text = getString(R.string.zero)
         title = view.findViewById(R.id.book_current_chapter)
         nextChapter = view.findViewById(R.id.book_skip_next)
         previousChapter = view.findViewById(R.id.book_skip_prev)
@@ -73,8 +76,7 @@ class BookFragment : Fragment() {
         bookModel.position.observe(this, Observer {
             val position = it.toInt()
             seekBar.progress = position
-            remainingtime.text =
-                getString(R.string.remaining_time, timeToString(seekBar.max - position))
+            progressTime.text = timeToStringShort(position)
         })
 
         bookModel.playPauseRes.observe(this, Observer {
@@ -111,6 +113,7 @@ class BookFragment : Fragment() {
 
     private fun updateUI(meta: BookVM.NowPlayingMetadata) {
         seekBar.max = meta.duration ?: 100
+        duration.text = timeToStringShort(meta.duration?:100)
         if (meta.image != null) {
             picture.setImageBitmap(meta.image)
         } else {
@@ -144,7 +147,6 @@ class BookFragment : Fragment() {
             return false
         }
     }
-
 
 
 }
