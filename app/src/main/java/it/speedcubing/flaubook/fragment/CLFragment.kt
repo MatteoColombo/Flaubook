@@ -12,47 +12,62 @@ import androidx.recyclerview.widget.RecyclerView
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.adapter.CLAdapter
+import it.speedcubing.flaubook.database.Chapter
 import it.speedcubing.flaubook.viewmodel.ChapterLVM
 import it.speedcubing.flaubook.viewmodel.MainVM
 import java.util.*
 
 class CLFragment : Fragment() {
 
+    private lateinit var mainVM: MainVM
     private lateinit var clVM: ChapterLVM
-    private lateinit var playerVM: MainVM
     private lateinit var chapterList: RecyclerView
-    private var currentChapter = 0
+    private var chapterNum = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val bookId = arguments?.getSerializable("book_id") as UUID
-        currentChapter = arguments?.getInt("chapter_num") as Int
-
         activity?.run {
-            clVM = ViewModelProvider(this).get(ChapterLVM::class.java)
-            clVM.bookID.postValue(bookId)
-            playerVM =
+            mainVM =
                 ViewModelProvider(this, Injector.provideMainViewModel(this)).get(MainVM::class.java)
+            clVM = ViewModelProvider(this).get(ChapterLVM::class.java)
         }
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.cl_layout, container, false)
 
         chapterList = view.findViewById(R.id.cl_list)
-        chapterList.layoutManager = LinearLayoutManager(context)
-        chapterList.adapter = CLAdapter(emptyList(), currentChapter) {}
+        chapterList.layoutManager = LinearLayoutManager(this.activity)
+        chapterList.adapter = CLAdapter(emptyList(), -1) { position -> chapterSelected(position) }
+        mainVM.meta.observe(this, Observer {
+            chapterNum = it.chapter!!.toInt() - 1
+            clVM.bookID.postValue(UUID.fromString(it.id))
+        })
 
         clVM.clLiveData.observe(this, Observer {
-            chapterList.adapter = CLAdapter(it, currentChapter) { pos -> chapterSelected(pos) }
+            chapterList.adapter =
+                CLAdapter(it, chapterNum) { position -> chapterSelected(position) }
         })
+
 
         return view
     }
 
     private fun chapterSelected(position: Int) {
-        playerVM.playSomething(clVM.bookID.value.toString(), position)
-        activity?.onBackPressed()
+        callback.chapterSelected()
+        mainVM.playSomething(mainVM.meta.value!!.id, position)
+    }
+
+    interface ChapterSelected {
+        fun chapterSelected()
+    }
+
+    companion object {
+        private lateinit var callback: ChapterSelected
+        fun initialize(parent: ChapterSelected) {
+            callback = parent
+        }
+
     }
 }

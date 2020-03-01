@@ -2,29 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 
-    <View
-        android:layout_width="22dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/drag_down"
-        app:layout_constraintBottom_toTopOf="@+id/book_cover"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
     <ImageView
         android:id="@+id/book_cover"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
         android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toTopOf="@+id/book_current_chapter"
@@ -58,7 +43,7 @@
         android:paddingStart="8dip"
         android:paddingEnd="8dip"
         android:progress="65"
-        app:layout_constraintBottom_toTopOf="@+id/book_show_chapters"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -134,18 +119,6 @@
         app:layout_constraintBottom_toTopOf="@+id/book_seek_bar"
         app:layout_constraintEnd_toStartOf="@+id/book_sb_30"
         app:layout_constraintTop_toBottomOf="@+id/book_current_chapter" />
-
-    <Button
-        android:id="@+id/book_show_chapters"
-        style="@style/MatOutButtonWithIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/chapters"
-        app:icon="@drawable/ic_format_list_bulleted_black_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

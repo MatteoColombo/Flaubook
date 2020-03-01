@@ -32,6 +32,7 @@ import it.speedcubing.flaubook.adapter.BLAdapter
 import it.speedcubing.flaubook.connection.ConnectionAction
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.filetools.ImportManager
+import it.speedcubing.flaubook.fragment.BSFragment
 import it.speedcubing.flaubook.fragment.BookFragment
 import it.speedcubing.flaubook.tools.ThemeManager
 import it.speedcubing.flaubook.viewmodel.MainVM
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                     fab.layoutParams = params
                     bottomBar.visibility = View.VISIBLE
                 }
-                else ->{
+                else -> {
                     val params = fab.layoutParams as CoordinatorLayout.LayoutParams
                     params.updateMargins(bottom = (16 * getResources().getDisplayMetrics().density).toInt())
                     fab.layoutParams = params
@@ -98,10 +99,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        bottomBar.setOnClickListener {
-            val fragment: BottomSheetDialogFragment = BookFragment()
-            fragment.show(supportFragmentManager, fragment.tag)
-        }
+        bottomBar.setOnClickListener { openBottomSheet() }
         mDetectorCompat = GestureDetectorCompat(this, SwipeDetector())
         bottomBar.setOnTouchListener { _, event ->
             mDetectorCompat.onTouchEvent(event)
@@ -182,8 +180,7 @@ class MainActivity : AppCompatActivity() {
         when (isLong) {
             false -> {
                 mainVM.playSomething(book.id.toString())
-                val fragment: BottomSheetDialogFragment = BookFragment()
-                fragment.show(supportFragmentManager, fragment.tag)
+                openBottomSheet()
             }
             true -> createOptionDialog(book)
         }
@@ -212,8 +209,7 @@ class MainActivity : AppCompatActivity() {
             val dy = event2.y - event1.y
             Log.i("SWIPER", "$dx $dy $velocityY")
             if (dx < TOLERATED_X && velocityY <= MINIMUM_SPEED && dy <= MINIMUM_Y) {
-                val fragment: BottomSheetDialogFragment = BookFragment()
-                fragment.show(supportFragmentManager, fragment.tag)
+                openBottomSheet()
                 return true
             }
             return false
@@ -250,6 +246,11 @@ class MainActivity : AppCompatActivity() {
             setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
         }.create().show()
 
+    }
+
+    private fun openBottomSheet() {
+        val fragment: BottomSheetDialogFragment = BSFragment()
+        fragment.show(supportFragmentManager, fragment.tag)
     }
 
 }

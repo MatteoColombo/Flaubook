@@ -97,10 +97,10 @@
     <style name="ModalBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="behavior_hideable">true</item>
         <item name="behavior_fitToContents">true</item>
-        <item name="behavior_peekHeight">700dp</item>
+        <item name="behavior_peekHeight">630dp</item>
         <item name="shapeAppearanceOverlay">@style/BottomSheetOverlay</item>
     </style>
-    
+
     <style name="BottomSheetOverlay" parent="ShapeAppearance.MaterialComponents.LargeComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">24dp</item>

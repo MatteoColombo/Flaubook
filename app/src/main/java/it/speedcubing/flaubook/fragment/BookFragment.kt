@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
@@ -16,7 +16,7 @@ import it.speedcubing.flaubook.tools.timeToStringShort
 import it.speedcubing.flaubook.viewmodel.MainVM
 
 
-class BookFragment : BottomSheetDialogFragment() {
+class BookFragment : Fragment() {
 
     private lateinit var mainVM: MainVM
     private lateinit var image: ImageView
