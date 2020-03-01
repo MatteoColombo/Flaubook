@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.updateMargins
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -82,8 +84,18 @@ class MainActivity : AppCompatActivity() {
         bottomBar = findViewById(R.id.bottom_appbar)
         mainVM.isPlayPause.observe(this, Observer {
             when (it) {
-                true -> bottomBar.visibility = View.VISIBLE
-                else -> bottomBar.visibility = View.GONE
+                true -> {
+                    val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+                    params.updateMargins(bottom = (75 * getResources().getDisplayMetrics().density).toInt())
+                    fab.layoutParams = params
+                    bottomBar.visibility = View.VISIBLE
+                }
+                else ->{
+                    val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+                    params.updateMargins(bottom = (16 * getResources().getDisplayMetrics().density).toInt())
+                    fab.layoutParams = params
+                    bottomBar.visibility = View.GONE
+                }
             }
         })
         bottomBar.setOnClickListener {

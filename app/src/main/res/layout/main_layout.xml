@@ -30,14 +30,13 @@
     </androidx.recyclerview.widget.RecyclerView>
 
 
-     <com.google.android.material.floatingactionbutton.FloatingActionButton
-          android:id="@+id/main_fab"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="bottom|right"
-          android:layout_marginRight="16dp"
-          android:layout_marginBottom="76dp"
-          app:srcCompat="@drawable/ic_add_black_24dp" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/ic_add_black_24dp" />
 
     <include layout="@layout/bottom_appbar"></include>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

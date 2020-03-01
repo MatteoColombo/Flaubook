@@ -6,21 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/book_book_title"
-        android:gravity="center"
-        android:fontFamily="@font/pacifico"
-        android:textSize="16sp"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+
+    <View
+        android:layout_width="22dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/drag_down"
         app:layout_constraintBottom_toTopOf="@+id/book_cover"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/book_cover"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toTopOf="@+id/book_current_chapter"
@@ -34,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="18sp"
+        android:layout_marginBottom="16dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
@@ -62,6 +66,7 @@
         android:id="@+id/book_remaining_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingEnd="8dip"
         app:layout_constraintEnd_toEndOf="@+id/book_seek_bar"
         app:layout_constraintTop_toBottomOf="@+id/book_seek_bar"
         tools:text="45:30" />
@@ -70,6 +75,7 @@
         android:id="@+id/book_progress_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="8dip"
         app:layout_constraintStart_toStartOf="@+id/book_seek_bar"
         app:layout_constraintTop_toBottomOf="@+id/book_seek_bar"
         tools:text="45:30" />
