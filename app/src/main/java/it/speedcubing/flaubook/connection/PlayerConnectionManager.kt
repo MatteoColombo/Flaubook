@@ -13,9 +13,11 @@ import androidx.lifecycle.MutableLiveData
 import it.speedcubing.flaubook.service.FORWARD_30_VAL
 import it.speedcubing.flaubook.service.REPLAY_30_VAL
 import it.speedcubing.flaubook.service.id
+import java.util.concurrent.Executors
 
 class PlayerConnectionManager(context: Context, componentName: ComponentName) {
 
+    val executor = Executors.newSingleThreadExecutor()
     val isConnected = MutableLiveData<Boolean>()
     val playState = MutableLiveData<PlaybackStateCompat>().apply { postValue(EMPTY_PLAYBACK_STATE) }
     val nowPlaying = MutableLiveData<MediaMetadataCompat>().apply { postValue(NOTHING_PLAYING) }
@@ -67,7 +69,7 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
     }
 
 
-    fun sendCommand(action: ConnectionAction, id: String = "", extra: Int = -1) {
+    fun sendCommand(action: ConnectionAction, id: String = "", extra: Int = -1) = executor.execute {
         if (browser.isConnected) {
             val bundle = Bundle()
             bundle.putInt("chapter_id", extra)

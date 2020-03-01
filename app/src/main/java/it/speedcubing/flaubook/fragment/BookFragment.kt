@@ -1,6 +1,7 @@
 package it.speedcubing.flaubook.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,6 +73,7 @@ class BookFragment : Fragment() {
         moveFw.setOnClickListener { mainVM.sendAction(ConnectionAction.MOVE_FW) }
         moveBw.setOnClickListener { mainVM.sendAction(ConnectionAction.MOVE_BW) }
         seekBar.setOnSeekBarChangeListener(Seek())
+
         return view
     }
 

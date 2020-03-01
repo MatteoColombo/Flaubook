@@ -255,12 +255,14 @@ class PlayerService : MediaBrowserServiceCompat() {
         fun register() {
             if (!registered) {
                 context.registerReceiver(this, noisyIntentFilter)
+                registered = true
             }
         }
 
         fun unRegister() {
             if (registered) {
                 context.unregisterReceiver(this)
+                registered = false
             }
         }
 
