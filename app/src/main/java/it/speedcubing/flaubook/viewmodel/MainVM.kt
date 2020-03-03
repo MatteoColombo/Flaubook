@@ -41,37 +41,6 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
         MutableLiveData<Int>().apply { postValue(R.drawable.notification_pause) }
 
     private val connectionObserver = Observer<Boolean> { isConnected = it }
-
-
-    fun connect() {
-        connection.connect()
-        connection.isConnected.observeForever(connectionObserver)
-        connection.nowPlaying.observeForever(mmObserver)
-        connection.playState.observeForever(pbsObserver)
-        updatePosition = true
-        checkPlaybackPosition()
-    }
-
-    fun disconnect() {
-        connection.isConnected.removeObserver(connectionObserver)
-        connection.playState.removeObserver(pbsObserver)
-        connection.nowPlaying.removeObserver(mmObserver)
-        connection.disconnect()
-        updatePosition = false
-    }
-
-    fun playSomething(id: String, chapter: Int = -1) {
-        connection.sendCommand(ConnectionAction.PLAY_BOOK, id, chapter)
-    }
-
-    fun sendAction(action: ConnectionAction) {
-        connection.sendCommand(action)
-    }
-
-    fun seekTo(moveTo: Int) {
-        connection.sendCommand(ConnectionAction.SEEK_TO, extra = moveTo)
-    }
-
     private val pbsObserver = Observer<PlaybackStateCompat> {
         state = it ?: EMPTY_PLAYBACK_STATE
         val metadata = connection.nowPlaying.value ?: NOTHING_PLAYING
@@ -87,6 +56,36 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
     private val mmObserver = Observer<MediaMetadataCompat> {
         updateState(state, it)
     }
+
+
+    init {
+        connection.isConnected.observeForever(connectionObserver)
+        connection.nowPlaying.observeForever(mmObserver)
+        connection.playState.observeForever(pbsObserver)
+        updatePosition = true
+        checkPlaybackPosition()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        connection.isConnected.removeObserver(connectionObserver)
+        connection.playState.removeObserver(pbsObserver)
+        connection.nowPlaying.removeObserver(mmObserver)
+        updatePosition = false
+    }
+
+    fun playSomething(id: String, chapter: Int = -1) {
+        connection.sendCommand(ConnectionAction.PLAY_BOOK, id, chapter)
+    }
+
+    fun sendAction(action: ConnectionAction) {
+        connection.sendCommand(action)
+    }
+
+    fun seekTo(moveTo: Int) {
+        connection.sendCommand(ConnectionAction.SEEK_TO, extra = moveTo)
+    }
+
 
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
         val currPosition = state.currentPlayBackPosition

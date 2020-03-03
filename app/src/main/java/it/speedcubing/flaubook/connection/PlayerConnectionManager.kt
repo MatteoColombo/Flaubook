@@ -52,20 +52,7 @@ class PlayerConnectionManager(context: Context, componentName: ComponentName) {
     init {
         isConnected.postValue(false)
         browser = MediaBrowserCompat(context, componentName, callback, null)
-    }
-
-    fun connect() {
-        when (browser.isConnected) {
-            false -> browser.connect()
-            true -> Log.i("CONNECTION", "Browser already connected, skipping")
-        }
-    }
-
-    fun disconnect() {
-        when (browser.isConnected) {
-            true -> browser.disconnect()
-            false -> Log.i("CONNECTION", "Browser already disconnected, skipping")
-        }
+        browser.connect()
     }
 
 

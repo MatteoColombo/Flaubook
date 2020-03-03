@@ -28,14 +28,6 @@ class BSFragment : BottomSheetDialogFragment(), CLFragment.ChapterSelected {
         CLFragment.initialize(this)
         pager = view.findViewById(R.id.bs_pager)
         pager.adapter = VPAdapter(this)
-        pager.getChildAt(0).setOnTouchListener { v, e ->
-            Log.i("PAGERTOUCH", "touch")
-            false
-        }
-        pager.setOnTouchListener { v, e ->
-            Log.i("PAGERTOUCH", "touchparent")
-            false
-        }
         tab = view.findViewById(R.id.bs_tab)
         TabLayoutMediator(tab, pager) { _, _ -> run {} }.attach()
         return view

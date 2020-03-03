@@ -122,17 +122,6 @@ class MainActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 
-    override fun onStart() {
-        super.onStart()
-        mainVM.connect()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mainVM.disconnect()
-    }
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -207,7 +196,6 @@ class MainActivity : AppCompatActivity() {
         ): Boolean {
             val dx = (event2.x - event1.x).absoluteValue
             val dy = event2.y - event1.y
-            Log.i("SWIPER", "$dx $dy $velocityY")
             if (dx < TOLERATED_X && velocityY <= MINIMUM_SPEED && dy <= MINIMUM_Y) {
                 openBottomSheet()
                 return true

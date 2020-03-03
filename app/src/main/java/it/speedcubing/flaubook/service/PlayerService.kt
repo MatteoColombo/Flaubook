@@ -11,11 +11,13 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
+import it.speedcubing.flaubook.connection.EMPTY_PLAYBACK_STATE
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.database.Chapter
@@ -83,10 +85,19 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        when (mediaSession.controller.playbackState.state) {
+            PlaybackStateCompat.STATE_PLAYING -> false
+            PlaybackStateCompat.STATE_PAUSED -> player.stop()
+            else -> true
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (mediaSession.controller.playbackState.state != PlaybackStateCompat.STATE_NONE) {
-            player.stop()
+        when (mediaSession.controller.playbackState.state) {
+            PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_PLAYING -> player.stop()
         }
         mediaSession.release()
         booksLiveData.removeObserver(bookObserver)
@@ -167,7 +178,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun onSkipToPrevious() {
             val nextChapter = player.chapter - 1
-            if (nextChapter < currentBook!!.book.chapNum) {
+            if (nextChapter >= 0) {
                 selectChapter(nextChapter)
             }
         }
@@ -251,18 +262,23 @@ class PlayerService : MediaBrowserServiceCompat() {
         private val noisyIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         private var registered = false
         private val controller = MediaControllerCompat(context, token)
+        private val lock = Object()
 
         fun register() {
-            if (!registered) {
-                context.registerReceiver(this, noisyIntentFilter)
-                registered = true
+            synchronized(lock) {
+                if (!registered) {
+                    context.registerReceiver(this, noisyIntentFilter)
+                    registered = true
+                }
             }
         }
 
         fun unRegister() {
-            if (registered) {
-                context.unregisterReceiver(this)
-                registered = false
+            synchronized(lock) {
+                if (registered) {
+                    context.unregisterReceiver(this)
+                    registered = false
+                }
             }
         }
 
