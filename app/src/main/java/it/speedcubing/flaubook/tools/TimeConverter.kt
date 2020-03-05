@@ -21,7 +21,7 @@ fun timeToString(time: Int): String {
 }
 
 fun timeToStringShort(time: Int): String {
-    if (time < 0) return "0s"
+    if (time < 0) return "0:00"
     val timeSeconds = time / 1000
     val seconds = timeSeconds % 60
     val minutes = timeSeconds / 60

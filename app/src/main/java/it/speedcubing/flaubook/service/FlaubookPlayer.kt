@@ -18,7 +18,6 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
     private var observers = mutableSetOf<PlayerCallback>()
     private val focusManager = FocusManager(context, this)
     private val sessionManager = SessionManager(session)
-    private var progressUpdater: Handler? = null
 
     init {
         player = MediaPlayer()
@@ -45,23 +44,29 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
 
     fun move(delta: Int) {
         val newPosition = player.currentPosition + delta
-        seekTo(
-            when {
-                newPosition < 0 -> 0
-                newPosition > player.duration -> player.duration - 1000
-                else -> newPosition
-            }
-        )
+        seekTo(newPosition)
     }
 
     fun seekTo(seekTo: Int) {
-        player.seekTo(seekTo)
-        updateStatePosition()
+        val newPosition = when {
+            seekTo < 0 -> 0
+            seekTo >= player.duration -> player.duration - 1000
+            else -> seekTo
+        }.toLong()
+        player.seekTo(newPosition, MediaPlayer.SEEK_CLOSEST)
+        updateStatePositionNoActions()
         saveProgress()
     }
 
     private fun updateStatePosition() {
         sessionManager.updateState(
+            session.controller.playbackState.state,
+            player.currentPosition.toLong()
+        )
+    }
+
+    private fun updateStatePositionNoActions() {
+        sessionManager.updateStateNoActions(
             session.controller.playbackState.state,
             player.currentPosition.toLong()
         )
@@ -106,10 +111,12 @@ class FlaubookPlayer(context: Context, private val session: MediaSessionCompat) 
 
             }
         }
+
+        player.setOnSeekCompleteListener { updateStatePosition() }
     }
 
 
-    private fun updateMetaAndPlay(){
+    private fun updateMetaAndPlay() {
         sessionManager.updateMeta(book, currentChapter)
         player.start()
         sessionManager.updateState(PlaybackState.STATE_PLAYING, player.currentPosition.toLong())

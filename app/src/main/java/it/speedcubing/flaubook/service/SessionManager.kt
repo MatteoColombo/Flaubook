@@ -25,6 +25,11 @@ class SessionManager(private val session: MediaSessionCompat) {
         session.setPlaybackState(pbsBuilder.build())
     }
 
+    fun updateStateNoActions(state: Int, position: Long = 0) {
+        setState(state, position)
+        session.setPlaybackState(pbsBuilder.build())
+    }
+
     private fun setState(state: Int, position: Long = 0) {
         pbsBuilder.setState(
             state,

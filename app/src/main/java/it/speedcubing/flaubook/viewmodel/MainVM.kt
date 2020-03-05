@@ -140,6 +140,14 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
         val isFirst: Boolean
     )
 
+    fun connect(){
+        connection.connect()
+    }
+
+    fun disconnect(){
+        connection.disconnect()
+    }
+
 
     class Factory(
         private val mediaServiceConnection: PlayerConnectionManager

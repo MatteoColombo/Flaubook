@@ -117,9 +117,19 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        mainVM.connect()
+    }
+
     override fun onRestart() {
         super.onRestart()
         volumeControlStream = AudioManager.STREAM_MUSIC
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainVM.disconnect()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
