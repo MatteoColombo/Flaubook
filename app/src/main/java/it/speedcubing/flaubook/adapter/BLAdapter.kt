@@ -9,20 +9,22 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import es.claucookie.miniequalizerlibrary.EqualizerView
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.tools.timeToString
+import java.util.*
 
 class BLAdapter(
     private val books: List<Book>,
-    private val playing: Int = -1,
+    private val playing: UUID? = null,
     private val clickListener: ((Book, Boolean) -> Unit)? = null
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         if (books.isEmpty()) return -1
-        if (position == playing) return 2
+        if (books[position].id == playing) return 2
         return when (books[position].listened) {
             0 -> 0
             else -> 1
@@ -32,9 +34,10 @@ class BLAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            0 -> BLViewHolder(inflater.inflate(R.layout.bl_item_no_progress, parent, false))
-            1,2 -> BLProgressViewHolder(inflater.inflate(R.layout.bl_item_layout, parent, false))
-            else -> BLEmptyViewHolder(inflater.inflate(R.layout.bl_empty, parent, false))
+            0 -> BLNewBook(inflater.inflate(R.layout.bl_item_no_progress, parent, false))
+            1 -> BLProgress(inflater.inflate(R.layout.bl_item_layout, parent, false))
+            2 -> BLPlaying(inflater.inflate(R.layout.bl_item_playing, parent, false))
+            else -> BLEmpty(inflater.inflate(R.layout.bl_empty, parent, false))
         }
     }
 
@@ -55,6 +58,7 @@ class BLAdapter(
         private val readBy: TextView = itemView.findViewById(R.id.bl_item_read_by)
         protected val remaining: TextView = itemView.findViewById(R.id.bl_item_remaining)
 
+
         open fun bind(book: Book, clicklistener: (Book, Boolean) -> Unit) {
             image.setImageBitmap(BitmapFactory.decodeFile(book.picture))
             title.text = book.title
@@ -71,7 +75,9 @@ class BLAdapter(
     }
 
 
-    class BLProgressViewHolder(view: View) : BLViewHolder(view) {
+    class BLNewBook(view: View) : BLViewHolder(view)
+
+    class BLProgress(view: View) : BLViewHolder(view) {
 
         private val progress: ProgressBar = itemView.findViewById(R.id.bl_item_progress)
 
@@ -89,7 +95,17 @@ class BLAdapter(
         }
     }
 
-    class BLEmptyViewHolder(view: View) :
+    class BLPlaying(view: View) : BLViewHolder(view) {
+
+        private val equalizerView: EqualizerView = itemView.findViewById(R.id.bl_item_equalizer)
+
+        override fun bind(book: Book, clicklistener: (Book, Boolean) -> Unit) {
+            super.bind(book, clicklistener)
+            equalizerView.animateBars()
+        }
+    }
+
+    class BLEmpty(view: View) :
         RecyclerView.ViewHolder(view)
 
 

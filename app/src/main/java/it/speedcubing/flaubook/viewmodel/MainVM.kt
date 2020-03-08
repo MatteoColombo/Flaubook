@@ -54,7 +54,9 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
     }
 
     private val mmObserver = Observer<MediaMetadataCompat> {
-        updateState(state, it)
+        if (it.id != null) {
+            updateState(state, it)
+        }
     }
 
 
@@ -140,11 +142,11 @@ class MainVM(private val connection: PlayerConnectionManager) : ViewModel() {
         val isFirst: Boolean
     )
 
-    fun connect(){
+    fun connect() {
         connection.connect()
     }
 
-    fun disconnect(){
+    fun disconnect() {
         connection.disconnect()
     }
 

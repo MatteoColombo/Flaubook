@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.AudioManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -14,7 +13,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.updateMargins
@@ -23,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -33,9 +30,9 @@ import it.speedcubing.flaubook.connection.ConnectionAction
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.filetools.ImportManager
 import it.speedcubing.flaubook.fragment.BSFragment
-import it.speedcubing.flaubook.fragment.BookFragment
 import it.speedcubing.flaubook.tools.ThemeManager
 import it.speedcubing.flaubook.viewmodel.MainVM
+import java.util.*
 import kotlin.math.absoluteValue
 
 private const val PERMISSION_REQUEST_CODE: Int = 3828
@@ -77,8 +74,11 @@ class MainActivity : AppCompatActivity() {
         bookList.layoutManager = LinearLayoutManager(this)
         bookList.adapter = BLAdapter(emptyList())
         mainVM.bookListLD.observe(this, Observer {
+            val firstVisible =
+                (bookList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             bookList.adapter =
                 BLAdapter(it) { book: Book, b: Boolean -> bookListItemClick(book, b) }
+            bookList.scrollToPosition(firstVisible)
         })
 
         /* Init bottom bar */
@@ -87,13 +87,13 @@ class MainActivity : AppCompatActivity() {
             when (it) {
                 true -> {
                     val params = fab.layoutParams as CoordinatorLayout.LayoutParams
-                    params.updateMargins(bottom = (75 * getResources().getDisplayMetrics().density).toInt())
+                    params.updateMargins(bottom = (75 * resources.displayMetrics.density).toInt())
                     fab.layoutParams = params
                     bottomBar.visibility = View.VISIBLE
                 }
                 else -> {
                     val params = fab.layoutParams as CoordinatorLayout.LayoutParams
-                    params.updateMargins(bottom = (16 * getResources().getDisplayMetrics().density).toInt())
+                    params.updateMargins(bottom = (16 * resources.displayMetrics.density).toInt())
                     fab.layoutParams = params
                     bottomBar.visibility = View.GONE
                 }
@@ -109,7 +109,16 @@ class MainActivity : AppCompatActivity() {
         bottomPlayPause = findViewById(R.id.bottom_play_pause)
         bottomPlayPause.setOnClickListener { mainVM.sendAction(ConnectionAction.PLAY_PAUSE) }
         bottomProgress = findViewById(R.id.bottom_progress)
-        mainVM.meta.observe(this, Observer { updateUI(it) })
+        mainVM.meta.observe(this, Observer {
+            updateUI(it)
+            val firstVisible =
+                (bookList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            bookList.adapter = BLAdapter(
+                mainVM.bookListLD.value!!,
+                UUID.fromString(it.id)
+            ) { book: Book, b: Boolean -> bookListItemClick(book, b) }
+            bookList.scrollToPosition(firstVisible)
+        })
         mainVM.playPauseResMini.observe(this, Observer { bottomPlayPause.setIconResource(it) })
         mainVM.position.observe(this, Observer {
             val intPos = it.toInt()

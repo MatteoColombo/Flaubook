@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import it.speedcubing.flaubook.Injector
 import it.speedcubing.flaubook.R
 import it.speedcubing.flaubook.adapter.CLAdapter
-import it.speedcubing.flaubook.database.Chapter
 import it.speedcubing.flaubook.viewmodel.ChapterLVM
 import it.speedcubing.flaubook.viewmodel.MainVM
 import java.util.*

@@ -11,13 +11,11 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
-import it.speedcubing.flaubook.connection.EMPTY_PLAYBACK_STATE
 import it.speedcubing.flaubook.database.Book
 import it.speedcubing.flaubook.database.BookRepository
 import it.speedcubing.flaubook.database.Chapter
@@ -25,6 +23,7 @@ import java.util.concurrent.Executors
 
 class PlayerService : MediaBrowserServiceCompat() {
 
+    private val executor = Executors.newSingleThreadExecutor()
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var notificationManager: NotificationManagerCompat
     private val bookRepository = BookRepository.get()
@@ -225,25 +224,31 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun bookPlaying() {
             mediaSession.isActive = true
-            val notification = notifBuilder.buildNotification(mediaSession.sessionToken)
-            notificationManager.notify(NOTIFICATION_ID, notification)
             noisyObserver.register()
-            if (!isForeground) {
-                ContextCompat.startForegroundService(
-                    applicationContext,
-                    Intent(applicationContext, this@PlayerService.javaClass)
-                )
-                startForeground(NOTIFICATION_ID, notification)
-                isForeground = true
+
+            executor.execute {
+                val notification = notifBuilder.buildNotification(mediaSession.sessionToken)
+                notificationManager.notify(NOTIFICATION_ID, notification)
+                if (!isForeground) {
+                    ContextCompat.startForegroundService(
+                        applicationContext,
+                        Intent(applicationContext, this@PlayerService.javaClass)
+                    )
+                    startForeground(NOTIFICATION_ID, notification)
+                    isForeground = true
+                }
             }
         }
 
         override fun bookPaused() {
-            stopForeground(false)
-            isForeground = false
-            val notification = notifBuilder.buildNotification(mediaSession.sessionToken)
-            notificationManager.notify(NOTIFICATION_ID, notification)
             noisyObserver.unRegister()
+
+            executor.execute {
+                stopForeground(false)
+                isForeground = false
+                val notification = notifBuilder.buildNotification(mediaSession.sessionToken)
+                notificationManager.notify(NOTIFICATION_ID, notification)
+            }
         }
 
 
