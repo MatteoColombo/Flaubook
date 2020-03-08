@@ -13,13 +13,13 @@ android {
         applicationId "it.speedcubing.flaubook"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 14
-        versionName "1.09"
+        versionCode 17
+        versionName "1.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
